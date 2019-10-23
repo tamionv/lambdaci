@@ -4,11 +4,11 @@ import Syntax
 import Control.Monad
 
 substitute :: Term -> Ident -> Term -> Term
-substitute s x t = case s of 
-    App a b -> App (substitute a x t) (substitute b x t)
+substitute s x t = case t of 
+    App a b -> App (substitute s x a) (substitute s x b)
     Abs y a | x == y -> a
-            | otherwise -> Abs y (substitute a x t)
-    Var y | x == y -> t
+            | otherwise -> Abs y (substitute s x a)
+    Var y | x == y -> s
           | otherwise -> Var y
 
 leftmostReduce :: Term -> Maybe Term

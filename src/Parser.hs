@@ -18,7 +18,7 @@ instance Show Term where
         Var x -> x
 
 ident :: ReadP Ident
-ident = munch1 isAlpha
+ident = munch1 isAlphaNum
 
 parens :: ReadP a -> ReadP a
 parens x = do

@@ -2,6 +2,7 @@ module Cli (runCliLoop) where
 
 import Data.Char
 import Syntax
+import Debug.Trace
 import Types
 import Reduction
 import Control.Monad
@@ -25,7 +26,7 @@ simpleCommand str f = do
 
 assignment :: P.ReadP CliCommand
 assignment = do
-    t <- P.munch1 isAlpha
+    t <- P.munch1 isAlphaNum
     P.skipSpaces
     P.string "="
     P.skipSpaces
@@ -52,7 +53,7 @@ addToContext defn@(ident, _) = (defn:) . filter ((/=ident) . fst)
 termInContext :: (Monad m) => Term -> StateT CliContext m Term
 termInContext t = do
     ctx <- get
-    return $ foldr (\(ident, term) current -> substitute term ident current) t ctx
+    return $ foldr (\(ident, term) current -> substitute term ident current) t ctx 
 
 cliAction :: CliCommand -> Term -> String
 cliAction (LeftmostReduce _) = show . leftmostReduce
@@ -63,12 +64,16 @@ cliAction (TypeProof _) = show . deduceTypeProof
 
 doCliCommand :: CliCommand -> StateT CliContext IO ()
 doCliCommand (AssignVariable id t) = modify (addToContext (id, t))
-doCliCommand (Type x) = case deduceType x of
-    Just t -> liftIO $ putStrLn $ show t
-    Nothing -> liftIO $ putStrLn "Untypable"
-doCliCommand (TypeProof x) = case deduceTypeProof x of
-    Just t -> liftIO $ putStrLn $ show t
-    Nothing -> liftIO $ putStrLn "Untypable"
+doCliCommand (Type x) = do
+    xx <- termInContext x
+    case deduceType xx of
+        Just t -> liftIO $ putStrLn $ show t
+        Nothing -> liftIO $ putStrLn "Untypable"
+doCliCommand (TypeProof x) = do
+    xx <- termInContext x
+    case deduceTypeProof xx of
+        Just t -> liftIO $ putStrLn $ show t
+        Nothing -> liftIO $ putStrLn "Untypable"
 doCliCommand command = termInContext (term command) >>= liftIO . putStrLn . cliAction command
 
 getCliCommand :: IO CliCommand
