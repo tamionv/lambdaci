@@ -12,13 +12,21 @@ increment (x:xs) = succ x : xs
 
 incrementTilGood ident term
     | not (ident `elem` freeVars term) = ident
-    | otherwise = trace (ident ++ "\n") $ incrementTilGood (increment ident) term
+    | otherwise = incrementTilGood (increment ident) term
+
+alphaConvert :: Ident -> Ident -> Term -> Term
+alphaConvert x xx t = case t of
+    App a b -> App (alphaConvert x xx a) (alphaConvert x xx b)
+    Abs y a | x == y -> Abs y a
+            | otherwise -> Abs y (alphaConvert x xx a)
+    Var y | x == y -> Var xx
+          | otherwise -> Var y
 
 substitute :: Term -> Ident -> Term -> Term
 substitute s x t = case t of 
     App a b -> App (substitute s x a) (substitute s x b)
-    Abs y a | x == y -> a
-            | otherwise -> Abs yy (substitute s x (substitute (Var yy) y a))
+    Abs y a | x == y -> Abs y a
+            | otherwise -> Abs yy (substitute s x (alphaConvert y yy a))
         where yy = incrementTilGood y s
     Var y | x == y -> s
           | otherwise -> Var y
