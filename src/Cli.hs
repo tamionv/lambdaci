@@ -63,7 +63,9 @@ cliAction (Type _) = show . deduceType
 cliAction (TypeProof _) = show . deduceTypeProof
 
 doCliCommand :: CliCommand -> StateT CliContext IO ()
-doCliCommand (AssignVariable id t) = modify (addToContext (id, t))
+doCliCommand (AssignVariable id t) = do
+    tt <- termInContext t
+    modify (addToContext (id, tt))
 doCliCommand (Type x) = do
     xx <- termInContext x
     case deduceType xx of
