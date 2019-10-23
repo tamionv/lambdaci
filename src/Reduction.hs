@@ -1,4 +1,4 @@
-module Reduction where
+module Reduction (substitute, leftmostReduce, fullyLeftmostReduce, headReduce, fullyHeadReduce) where
 
 import Syntax
 import Control.Monad
