@@ -1,1 +1,3 @@
-main = undefined
+import Cli
+
+main = runCliLoop

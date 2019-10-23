@@ -18,6 +18,9 @@ leftmostReduce term = case term of
     App (Abs x s) t -> Just $ substitute t x s
     App s t -> liftM (flip App t) (leftmostReduce s) `mplus` liftM (App s) (leftmostReduce t)
 
+fullyLeftmostReduce :: Term -> Term
+fullyLeftmostReduce = undefined
+
 headReduce :: Term -> Maybe Term
 headReduce = firstStep where
     firstStep (App s t) = secondStep (App s t)
@@ -26,3 +29,6 @@ headReduce = firstStep where
     secondStep (App (App s t) u) = secondStep (App s t)
     secondStep (App (Abs x s) t) = Just $ substitute t x s
     secondStep (App (Var x) s) = Nothing
+
+fullyHeadReduce :: Term -> Term
+fullyHeadReduce = undefined

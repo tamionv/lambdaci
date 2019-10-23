@@ -51,7 +51,7 @@ executable main
   main-is:             Main.hs
 
   -- Modules included in this library but not exported.
-  other-modules:       Syntax, Parser, Types, Reduction
+  other-modules:       Syntax, Parser, Types, Reduction, Cli
 
   -- LANGUAGE extensions used by modules in this package.
   other-extensions:    FlexibleContexts
