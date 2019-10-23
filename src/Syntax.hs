@@ -6,8 +6,6 @@ data Term = App Term Term
           | Abs Ident Term
           | Var Ident
 
-freeVars term = case term of
-    Var x -> [x]
-    Abs x s -> filter (/=x) $ freeVars s
-    App s t -> freeVars s ++ freeVars t
-
+freeVars (Var x) = [x]
+freeVars (Abs x s) = filter (/=x) $ freeVars s
+freeVars (App s t) = freeVars s ++ freeVars t
